@@ -1,5 +1,4 @@
 ﻿using Svb.Test.Common;
-using Svb.Test.Models;
 
 namespace Svb.Test;
 
@@ -15,7 +14,7 @@ public class Program
         ]);
 
         Console.WriteLine(reservationManager.FindAvailableReservationOptions(numberOfGuests: 2));
-        //Console.WriteLine(reservationManager.FindAvailableReservationOptions(numberOfGuests: 3));
-        //Console.WriteLine(reservationManager.FindAvailableReservationOptions(numberOfGuests: 6));
+        Console.WriteLine(reservationManager.FindAvailableReservationOptions(numberOfGuests: 3));
+        Console.WriteLine(reservationManager.FindAvailableReservationOptions(numberOfGuests: 6));
     }
 }

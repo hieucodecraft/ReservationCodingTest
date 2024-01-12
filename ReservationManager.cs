@@ -1,4 +1,6 @@
-﻿namespace Svb.Test.Models
+﻿using Svb.Test.Models;
+
+namespace Svb.Test
 {
     public interface IReservationManager
     {
@@ -12,7 +14,7 @@
         public string FindAvailableReservationOptions(int numberOfGuests)
         {
             var options = new List<ReservationOption>();
-            FindOptionsRecursive(numberOfGuests, roomTypeOptions:[], options);
+            FindOptionsRecursive(numberOfGuests, availableOptions: [], options);
 
             var cheapestOption = options?.OrderBy(option => option.TotalPrice).FirstOrDefault();
 
@@ -21,30 +23,29 @@
                 : "No option";
         }
 
-        private void FindOptionsRecursive(int guests, 
-            List<string> roomTypeOptions, 
+        private void FindOptionsRecursive(
+            int guests,
+            List<string> availableOptions,
             List<ReservationOption> result)
         {
             if (guests == 0)
             {
-                var totalPrice = roomTypeOptions
-                    .Sum(roomType => _rooms.First(room => room.Type == roomType).Price);
-
-                result.Add(new ReservationOption([.. roomTypeOptions], totalPrice));
+                var totalPrice = availableOptions.Sum(roomType => _rooms.First(room => room.Type == roomType).Price);
+                result.Add(new ReservationOption([.. availableOptions], totalPrice));
                 return;
             }
 
             foreach (var room in _rooms)
             {
-                var currentNumberOfRoomType = roomTypeOptions.Count(roomType => roomType == room.Type);
+                var currentNumberOfRoomType = availableOptions.Count(roomType => roomType == room.Type);
                 if (guests >= room.AvailableGuests && currentNumberOfRoomType < room.NumberOfRooms)
                 {
-                    roomTypeOptions.Add(room.Type);
+                    availableOptions.Add(room.Type);
 
                     var remainingGuests = guests - room.AvailableGuests;
-                    FindOptionsRecursive(remainingGuests, roomTypeOptions, result);
+                    FindOptionsRecursive(remainingGuests, availableOptions, result);
 
-                    roomTypeOptions.RemoveAt(roomTypeOptions.Count - 1);
+                    availableOptions.RemoveAt(availableOptions.Count - 1);
                 }
             }
         }
