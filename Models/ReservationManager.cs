@@ -2,38 +2,49 @@
 {
     public interface IReservationManager
     {
-        List<ReservationOption> FindAvailableReservationOptions(int numberOfGuests);
+        string FindAvailableReservationOptions(int numberOfGuests);
     }
 
     public class ReservationManager(List<Room> rooms) : IReservationManager
     {
         private readonly List<Room> _rooms = rooms;
 
-        public List<ReservationOption> FindAvailableReservationOptions(int numberOfGuests)
+        public string FindAvailableReservationOptions(int numberOfGuests)
         {
-            var reservationOptions = new List<ReservationOption>();
-            GenerateOptions(numberOfGuests, reservationOptions);
-            return reservationOptions;
+            var options = new List<ReservationOption>();
+            FindOptionsRecursive(numberOfGuests, roomTypeOptions:[], options);
+
+            var cheapestOption = options?.OrderBy(option => option.TotalPrice).FirstOrDefault();
+
+            return cheapestOption != null ?
+                $"{string.Join(" ", cheapestOption.RoomTypes)} - ${cheapestOption.TotalPrice}"
+                : "No option";
         }
 
-        private void GenerateOptions(int guests, List<ReservationOption> reservationOptions)
+        private void FindOptionsRecursive(int guests, 
+            List<string> roomTypeOptions, 
+            List<ReservationOption> result)
         {
+            if (guests == 0)
+            {
+                var totalPrice = roomTypeOptions
+                    .Sum(roomType => _rooms.First(room => room.Type == roomType).Price);
+
+                result.Add(new ReservationOption([.. roomTypeOptions], totalPrice));
+                return;
+            }
+
             foreach (var room in _rooms)
             {
-                if (guests >= room.AvailableGuests)
+                var currentNumberOfRoomType = roomTypeOptions.Count(roomType => roomType == room.Type);
+                if (guests >= room.AvailableGuests && currentNumberOfRoomType < room.NumberOfRooms)
                 {
-                    int numberOfRoomsToBook = Math.Min(guests / room.AvailableGuests, room.NumberOfRooms);
-                    int remainingGuest = guests - numberOfRoomsToBook * room.AvailableGuests;
+                    roomTypeOptions.Add(room.Type);
 
-                    if (remainingGuest > 0)
-                    {
-                        GenerateOptions(remainingGuest, reservationOptions);
-                    }
+                    var remainingGuests = guests - room.AvailableGuests;
+                    FindOptionsRecursive(remainingGuests, roomTypeOptions, result);
 
-                    var roomTypes = Enumerable.Repeat(room.Type, numberOfRoomsToBook).ToList();
-                    var currentOption = new ReservationOption(roomTypes, numberOfRoomsToBook * room.Price);
-
-                    reservationOptions.Add(currentOption);
+                    roomTypeOptions.RemoveAt(roomTypeOptions.Count - 1);
                 }
             }
         }

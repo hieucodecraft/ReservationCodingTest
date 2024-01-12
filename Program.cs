@@ -1,24 +1,21 @@
-﻿//using Svb.Test.Models;
-//namespace Svb.Test;
+﻿using Svb.Test.Common;
+using Svb.Test.Models;
 
-//public class Program
-//{
-//    static void Main1111()
-//    {
-//        HotelReservationSystem hotelReservationSystem = new();
+namespace Svb.Test;
 
-//        //Console.WriteLine("Enter the number of guests: ");
-//        //if (int.TryParse(Console.ReadLine(), out int numberOfGuests))
-//        //{
-//        //    string result = hotelReservationSystem.HandleBookingReservation(3);
-//        //    Console.WriteLine($"Output: {result}");
-//        //}
-//        //else
-//        //{
-//        //    Console.WriteLine("Invalid input. Please enter a valid number.");
-//        //}
+public class Program
+{
+    static void Main()
+    {
+        IReservationManager reservationManager = new ReservationManager(
+        [
+            new(RoomType.Single, 1, 2, 30),
+            new(RoomType.Double, 2, 3, 50),
+            new(RoomType.Family, 4, 1, 85)
+        ]);
 
-//        //string result = hotelReservationSystem.HandleReservationBooking(6);
-//        //Console.WriteLine($"Output: {result}");
-//    }
-//}
+        Console.WriteLine(reservationManager.FindAvailableReservationOptions(numberOfGuests: 2));
+        //Console.WriteLine(reservationManager.FindAvailableReservationOptions(numberOfGuests: 3));
+        //Console.WriteLine(reservationManager.FindAvailableReservationOptions(numberOfGuests: 6));
+    }
+}
