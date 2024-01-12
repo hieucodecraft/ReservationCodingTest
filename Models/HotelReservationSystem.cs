@@ -22,13 +22,11 @@ namespace Svb.Test.Models
         public string HandleReservationBooking(int numberOfGuests)
         {
             var options = _reservationManager.FindAvailableReservationOptions(numberOfGuests);
-            if (options.Count == 0)
-            {
-                return "No option";
-            }
+            var cheapestOption = options?.OrderBy(option => option.TotalPrice).FirstOrDefault();
 
-            var cheapestOption = options.OrderBy(option => option.TotalPrice).First();
-            return $"{string.Join(" ", cheapestOption.RoomTypes)} - ${cheapestOption.TotalPrice}";
+            return cheapestOption != null ? 
+                $"{string.Join(" ", cheapestOption.RoomTypes)} - ${cheapestOption.TotalPrice}" 
+                : "No option";
         }
     }
 }
