@@ -8,13 +8,13 @@ public class Program
     {
         IReservationManager reservationManager = new ReservationManager(
         [
-            new(RoomType.Single, 1, 2, 30),
-            new(RoomType.Double, 2, 3, 50),
-            new(RoomType.Family, 4, 1, 85)
+            new(RoomType.Single, 1, 30),
+            new(RoomType.Double, 2, 50),
+            new(RoomType.Family, 4, 85)
         ]);
 
-        Console.WriteLine(reservationManager.FindAvailableReservationOptions(numberOfGuests: 2));
-        Console.WriteLine(reservationManager.FindAvailableReservationOptions(numberOfGuests: 3));
-        Console.WriteLine(reservationManager.FindAvailableReservationOptions(numberOfGuests: 6));
+        Console.WriteLine(reservationManager.FindCheapestReservationOption(numberOfGuests: 2)?.ToString());
+        //Console.WriteLine(reservationManager.FindCheapestReservationOption(numberOfGuests: 3)?.ToString());
+        //Console.WriteLine(reservationManager.FindCheapestReservationOption(numberOfGuests: 20)?.ToString());
     }
 }

@@ -7,4 +7,9 @@ public class ReservationOption(List<string> roomTypes, decimal totalPrice)
 {
     public List<string> RoomTypes { get; set; } = roomTypes;
     public decimal TotalPrice { get; set; } = totalPrice;
+
+    public override string ToString()
+    {
+        return $"{string.Join(" ", RoomTypes)} - ${TotalPrice}";
+    }
 }

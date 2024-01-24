@@ -1,26 +1,30 @@
-﻿using Svb.Test.Models;
+﻿using Svb.Test.Common;
+using Svb.Test.Models;
 
 namespace Svb.Test
 {
     public interface IReservationManager
     {
-        string FindAvailableReservationOptions(int numberOfGuests);
+        ReservationOption? FindCheapestReservationOption(int numberOfGuests);
     }
 
     public class ReservationManager(List<Room> rooms) : IReservationManager
     {
         private readonly List<Room> _rooms = rooms;
+        private readonly Dictionary<string, int> _numberOfRooms = new()
+        {
+            { RoomType.Single, 2 }, 
+            { RoomType.Double, 3 }, 
+            { RoomType.Family, 1 } 
+        };
 
-        public string FindAvailableReservationOptions(int numberOfGuests)
+        public ReservationOption? FindCheapestReservationOption(int numberOfGuests)
         {
             var options = new List<ReservationOption>();
             FindOptionsRecursive(numberOfGuests, availableOptions: [], options);
-
             var cheapestOption = options?.OrderBy(option => option.TotalPrice).FirstOrDefault();
 
-            return cheapestOption != null ?
-                $"{string.Join(" ", cheapestOption.RoomTypes)} - ${cheapestOption.TotalPrice}"
-                : "No option";
+            return cheapestOption;
         }
 
         private void FindOptionsRecursive(
@@ -38,7 +42,7 @@ namespace Svb.Test
             foreach (var room in _rooms)
             {
                 var currentNumberOfRoomType = availableOptions.Count(roomType => roomType == room.Type);
-                if (guests >= room.AvailableGuests && currentNumberOfRoomType < room.NumberOfRooms)
+                if (guests >= room.AvailableGuests && currentNumberOfRoomType < _numberOfRooms[room.Type])
                 {
                     availableOptions.Add(room.Type);
 
