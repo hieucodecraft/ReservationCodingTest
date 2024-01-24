@@ -41,8 +41,8 @@ namespace Svb.Test
 
             foreach (var room in _rooms)
             {
-                var currentNumberOfRoomType = availableOptions.Count(roomType => roomType == room.Type);
-                if (guests >= room.AvailableGuests && currentNumberOfRoomType < _numberOfRooms[room.Type])
+                int matchingRoomTypeCount = availableOptions.Count(roomType => roomType == room.Type);
+                if (guests >= room.AvailableGuests && matchingRoomTypeCount < _numberOfRooms[room.Type])
                 {
                     availableOptions.Add(room.Type);
 
